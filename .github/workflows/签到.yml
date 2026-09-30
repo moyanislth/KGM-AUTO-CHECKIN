@@ -2,20 +2,22 @@ name: 签到
 on:
   schedule:
     - cron: "15 20 * * *"
-      timezone: "Asia/Shanghai"
+  workflow_dispatch:      # ← 新增：支持手动点击执行
+
 permissions:
   contents: read
   actions: write
+
 jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: 检出仓库
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: 创建 Node 环境
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'npm'
@@ -23,7 +25,7 @@ jobs:
 
       - name: 缓存依赖
         id: cache-npm
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: ./api/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('./api/package-lock.json') }}
@@ -40,7 +42,6 @@ jobs:
           USERINFO: ${{ secrets.USERINFO }}
           PAT: ${{ secrets.PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          # 通知渠道
           WECOM_BOT_KEY: ${{ secrets.WECOM_BOT_KEY }}
           DINGTALK_BOT_KEY: ${{ secrets.DINGTALK_BOT_KEY }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
